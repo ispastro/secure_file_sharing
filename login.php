@@ -21,7 +21,8 @@ if($_SERVER['REQUEST_METHOD']=='post'){
 
     $_SESSION['user_id']=$user['id'];
     $_SESSION['username']=$user['username'];
-    echo "login successfull! < a href='index.php'>Go to home page</a>";
+    echo "login successfull! ";
+    header('Location:index.php');
 
 
 }
@@ -29,10 +30,34 @@ if($_SERVER['REQUEST_METHOD']=='post'){
 
 
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+</head>
+<body>
 
-<!--login form -->
-<form method ="post">
-    <input type ="text" name ="email" required>
-    <input type ="text" name ="password" required>
-    <button type="submit"> button</button>
+<form>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Email address</label>
+    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Password</label>
+    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+  </div>
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+    
+</body>
+</html>
+
+

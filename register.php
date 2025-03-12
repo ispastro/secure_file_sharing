@@ -1,51 +1,78 @@
 <?php
-require 'includes/config.php';
-//Database connection 
-
+require'includes/config.php';
 session_start();
 
+//check if the user is submitted the form
+
 if($_SERVER['REQUEST_METHOD']=='POST'){
-    // collect user input 
+    $username =$_POST['username'];
+    $email =$_POST['email'];
+    $password =-$_POST['password'];
+    $confirm_password =$_POST['confirm_password'];
+// initialize the error array
+    $_SESSION['error']=[];
 
-    $username =trim($_POST['username']);
-    $email =trim($_POST['email']);
-    $password = $_POST['password'];
-    if(empty($username)|| empty($email)|| empty($password)){
-        die("All fields are required!");
-
+    //validate the form
+    if(empty($username) || empty($email) || empty($password)){
+        $_SESSION['error'] ="please all fields are required!";
+        exit();
     }
-    if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-        die("Invalid email format!");
-    }
-  // check if email or username alreadu exists or not 
-  $stmt =$pdo->prepare("SELECT *FROM users where email =? or username =?");
+       // check email format
 
-  $stmt->execute([$email,$username]);
+       if(!filter_var($email,FILTER_VALIDATE_EMAIL)){
+        $_SESSION['error']="Invalid email format";
+        exit();
+
+       }
+       // check password length
+       if(strlen($password)<8){
+        $_SESSION['error'] ="password must be at least 8 characters";
+        exit();
+       }
+
+       // check if the email is already in the database 
+
+       $stmt =$pdo->prepare("SELECT * FROM users WHERE email=? OR username =?");
+
+       // sends the query to the database to check if the credentials are already in the database
+       $stmt->execute([$email,$username]);
        if($stmt->fetch()){
-        die("username or email already taken!");
+        $_SESSION= 'Email or username already exists';
+        exit();
+       }
+       
+        // hash the password 
+    $hashed_password =password_hash($password, PASSWORD_DEFAULT);
+
+       // insert the user into the database
+       $stmt =$pdo->prepare("INSERT INTO users(username,email, password_hash) VALUES(?,?,?)");
+       if($stmt->execute([$username,$email,$hashed_password])){
+        $_SESSION['success']="User registation succussfully";
+        header("location:login.php");
+        exit();
+
+       }
+       else {
+         $_SESSION['']="Failed to create user:please try again";
+         header("location:register.php");
+         exit();
 
        }
 
-       $hashed_password =password_hash($password, PASSWORD_DEFAULT);
 
+       };
 
-       $stmt =$pdo->prepare("INSERT INTO users(username, email, hashed_password) VALUES(?,?,?)");
-       $stmt->execute([$username, $email, $hashed_password]);
-       echo"User registered successfully!";
-       header('Location:login.php');
-
-
-      
-
-}
 
 
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Register</title>
 </head>
 <body>
@@ -63,3 +90,4 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
 <a href="login.php">Login</a>
 </body>
 </html>
+
