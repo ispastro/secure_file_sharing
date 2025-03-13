@@ -1,9 +1,5 @@
 <?php session_start();
-if(!isset($_SESSION['user_id'])){
-    $_SESSION['login_errors'] = ['You must be logged in to access this page'];
-    header("location:login_form.php");
-    exit();
-} ?>
+ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
