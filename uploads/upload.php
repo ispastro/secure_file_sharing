@@ -6,7 +6,7 @@ $target_file =$target_dr.basename($_FILES['fileToUpload']['name']);
 // basename makes sure actual file name not full path
 // combines the directory with the file name 
 
-$targetOk =1;
+
 $imageFileType=strtolower(pathinfo($target_dr,PATHINFO_EXTENSION));
 // pathinfo(target_file, PATHINFO_EXTENSION extracts the file extension 
 
@@ -15,15 +15,36 @@ $imageFileType=strtolower(pathinfo($target_dr,PATHINFO_EXTENSION));
 if(isset($_POST["submit"])){
     $check =getimagesize($_FILES["fileToUpload"]["tmp_name"]);
       if($check!==false){
-        echo "file is image-".$check["mimi"].".";
+        echo "File is image-".$check["mimi"].".";
         $uploadOK=1;
-        
-      }
-      
+        // 
 
-      
+      }
+      else{
+        echo "file is not image .";
+        $uploadOK =0;
+        // file is not to be uploaded 
+
+      }    
+}
+if(file_exists($target_file)){
+    echo "Sorry, file already exists!";
+    $uploadOK =0;
+
 }
 
+if($_FILES['fileToUpload']['size'] >5000000){
+    echo "Sorry, your file is too large";
+    $uploadOK =0;
 
+}
 
+if($imageFileType!='jpg' &&
+    $imageFileType!='png' &&
+    $imageFileType!='jpeg' &&
+    $imageFileType!='gif') {
+        echo "Sorry , only JPG, JPEG, PNG & GIF files are allowed.";
+        $uploadOK =0;
+    }
+    
 ?>
