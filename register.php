@@ -7,7 +7,7 @@ session_start();
 if($_SERVER['REQUEST_METHOD']=='POST'){
     $username =$_POST['username'];
     $email =$_POST['email'];
-    $password =-$_POST['password'];
+    $password =$_POST['password'];
     $confirm_password =$_POST['confirm_password'];
 // initialize the error array
     $_SESSION['error']=[];
@@ -15,18 +15,21 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
     //validate the form
     if(empty($username) || empty($email) || empty($password)){
         $_SESSION['error'] ="please all fields are required!";
+        header("location:register_form.php");
         exit();
     }
        // check email format
 
        if(!filter_var($email,FILTER_VALIDATE_EMAIL)){
         $_SESSION['error']="Invalid email format";
+        header("location:register_form.php");
         exit();
 
        }
        // check password length
        if(strlen($password)<8){
         $_SESSION['error'] ="password must be at least 8 characters";
+        header("location:register_form.php");
         exit();
        }
 
@@ -38,6 +41,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
        $stmt->execute([$email,$username]);
        if($stmt->fetch()){
         $_SESSION= 'Email or username already exists';
+        header("location:register_form.php");
         exit();
        }
        
@@ -48,13 +52,13 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
        $stmt =$pdo->prepare("INSERT INTO users(username,email, password_hash) VALUES(?,?,?)");
        if($stmt->execute([$username,$email,$hashed_password])){
         $_SESSION['success']="User registation succussfully";
-        header("location:login.php");
+        header("location:login_form.php");
         exit();
 
        }
        else {
          $_SESSION['']="Failed to create user:please try again";
-         header("location:register.php");
+         header("location:register_form.php");
          exit();
 
        }
@@ -65,29 +69,4 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
 
 
 ?>
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-  
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Register</title>
-</head>
-<body>
-    <h1>Register</h1>
-<!--Register form -->
-<form  method="post">
-    <label for="username">Username</label>
-    <input type="text" name="username" id="username" required>
-    <label for="email">Email</label>
-    <input type="email" name="email" id="email" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <button type="submit">Register</button>
-</form>
-<a href="login.php">Login</a>
-</body>
-</html>
 

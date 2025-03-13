@@ -1,63 +1,34 @@
 <?php
+
 require 'includes/config.php';
+ob_start();
 session_start();
-if($_SERVER['REQUEST_METHOD']=='post'){
-    $email = trim($_POST['email']);
-    $password =$_POST['password'];
-    if(empty($email)|| empty($password)){
-        die("All fields are required!");
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+    $password = trim($_POST['password']);
+    $_SESSION['error'] = [];
+
+    if (empty($email) || empty($password)) {
+        $_SESSION['error'][] = "All fields are required!";
+        header("Location: login_form.php");
+        exit();
     }
-    $stmt  =$pdo->prepare("SELECT *FROM users where email =?");
+
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->execute([$email]);
-    $user =$stmt->fetch();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if(!$user || !password_verify($password,$user['password_hash'])){
-        die("Invalid email or password!");
-
-        
+    if (!$user || !password_verify($password, $user['password_hash'])) {
+        $_SESSION['error'][] = "Invalid email or password!";
+        header("Location: login_form.php");
+        exit();
     }
 
-    // set session varaibles 
-
-    $_SESSION['user_id']=$user['id'];
-    $_SESSION['username']=$user['username'];
-    echo "login successfull! ";
-    header('Location:index.php');
-
-
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['username'] = $user['username'];
+    header("Location: secure_file_sharing/homePage.php");
+    exit();
 }
 
-
-
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
-</head>
-<body>
-
-<form>
-  <div class="form-group">
-    <label for="exampleInputEmail1">Email address</label>
-    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-  </div>
-  <div class="form-group">
-    <label for="exampleInputPassword1">Password</label>
-    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-  </div>
-  <div class="form-check">
-    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-    <label class="form-check-label" for="exampleCheck1">Check me out</label>
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-    
-</body>
-</html>
-
-

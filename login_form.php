@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure File Sharing - Register</title>
+    <title>Secure File Sharing - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Reuse the same animations from register form */
         @keyframes holographic {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -83,31 +83,29 @@
             </div>
 
             <h2 class="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-blue-400 mb-8 animate-text-shine">
-                Secure File Sharing
+                Welcome Back
             </h2>
 
             <!-- Error Messages -->
-            <?php if (isset($_SESSION['errors']) && !empty($_SESSION['errors'])): ?>
+            <?php if (isset($_SESSION['login_errors']) && !empty($_SESSION['login_errors'])): ?>
                 <div class="bg-red-400/30 backdrop-blur-sm p-4 mb-6 rounded-xl border border-red-400/50 animate-slide-down">
-                    <?php foreach ($_SESSION['errors'] as $error): ?>
+                    <?php foreach ($_SESSION['login_errors'] as $error): ?>
                         <p class="text-red-100 flex items-center gap-2">
                             <i class="fas fa-exclamation-circle"></i>
                             <?= htmlspecialchars($error) ?>
                         </p>
                     <?php endforeach; ?>
                 </div>
-                <?php unset($_SESSION['errors']); ?>
+                <?php unset($_SESSION['login_errors']); ?>
             <?php endif; ?>
 
-            <!-- Registration Form -->
-            <form action="register.php" method="POST" class="space-y-6">
+            <!-- Login Form -->
+            <form action="login.php" method="POST" class="space-y-6">
                 <!-- Form Fields -->
                 <?php 
                 $fields = [
-                    ['icon' => 'user', 'name' => 'username', 'label' => 'Username', 'type' => 'text'],
-                    ['icon' => 'envelope', 'name' => 'email', 'label' => 'Email', 'type' => 'email'],
-                    ['icon' => 'lock', 'name' => 'password', 'label' => 'Password', 'type' => 'password'],
-                    ['icon' => 'lock', 'name' => 'confirm_password', 'label' => 'Confirm Password', 'type' => 'password']
+                    ['icon' => 'user', 'name' => 'username', 'label' => 'Username/Email', 'type' => 'text'],
+                    ['icon' => 'lock', 'name' => 'password', 'label' => 'Password', 'type' => 'password']
                 ];
                 
                 foreach ($fields as $field): ?>
@@ -121,7 +119,7 @@
                         id="<?= $field['name'] ?>" 
                         required
                         class="w-full pl-12 pr-5 py-4 bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl focus:border-pink-400/50 focus:ring-2 focus:ring-pink-400/30 placeholder-gray-400 text-gray-100 transition-all duration-300 outline-none"
-                        placeholder="<?= $field['label'] ?>" />
+                        placeholder=" ">
                     <label 
                         for="<?= $field['name'] ?>" 
                         class="absolute left-12 top-4 text-gray-400 pointer-events-none transition-all duration-300 group-focus-within:-translate-y-6 group-focus-within:text-sm group-focus-within:text-pink-400 <?= !empty($_POST[$field['name']]) ? '-translate-y-6 text-sm text-pink-400' : '' ?>"
@@ -131,23 +129,33 @@
                 </div>
                 <?php endforeach; ?>
 
+                <!-- Remember Me & Forgot Password -->
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center text-gray-300">
+                        <input type="checkbox" name="remember" class="rounded border-white/30 bg-white/5 focus:ring-pink-400">
+                        <span class="ml-2">Remember me</span>
+                    </label>
+                    <a href="forgot-password.php" class="text-pink-300 hover:text-pink-200 text-sm underline underline-offset-4 decoration-white/30 hover:decoration-pink-200">
+                        Forgot Password?
+                    </a>
+                </div>
+
                 <!-- Submit Button -->
                 <button type="submit" 
                     class="w-full py-4 px-6 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-pink-500/20 relative overflow-hidden">
-                    <span class="relative z-10">Create Account</span>
+                    <span class="relative z-10">Sign In</span>
                     <div class="absolute inset-0 bg-white/10 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity"></div>
                 </button>
             </form>
 
-            <!-- Login Link -->
+            <!-- Registration Link -->
             <p class="text-center mt-6 text-gray-300">
-                Already have an account?
-                <a href="login_form.php" class="text-pink-300 hover:text-pink-200 font-semibold underline underline-offset-4 decoration-white/30 hover:decoration-pink-200 transition-colors">
-                    Sign In
+                Don't have an account?
+                <a href="register_form.php" class="text-pink-300 hover:text-pink-200 font-semibold underline underline-offset-4 decoration-white/30 hover:decoration-pink-200 transition-colors">
+                    Create Account
                 </a>
             </p>
         </div>
     </div>
-
 </body>
 </html>
